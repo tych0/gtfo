@@ -1,0 +1,10 @@
+Options +ExecCGI
+AddHandler cgi-script .py
+<IfModule mod_rewrite.c>
+  RewriteEngine on
+  RewriteBase /
+  RewriteCond %{REQUEST_URI} !^/static/(.*)$
+  RewriteCond %{REQUEST_FILENAME} !-f  
+  RewriteRule ^(.*)$ /dispatcher.py/$1  [L]
+</IfModule>
+
