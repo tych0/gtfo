@@ -1,24 +1,24 @@
 import web
-import sys
-import os
+from markdown2 import markdown
+from os.path import splitext
 
-urls = [("/(.*)html", "ident"),
-        ("/(.*)md", "markdown")
-			 ]
+urls = (
+  "/(.*)", "GTFO",
+)
+       
 render = web.template.render('templates/')
 web.template.Template.globals['render'] = render
-
-class ident:
-	def GET(self, path):
-		return open(path+'.html').read()
-
-class markdown:
-	def GET(self, path):
-		return 'markdown not supported yet :('
 
 class GTFO:
   def GET(self, path=None):
     if not path: path='index'
-    return render.template('hi there', open('www/'+path).read())
+    path = splitext(path)[0]
+
+    try:
+      return render.template('hi there', markdown(open('www/'+path+'.mkd').read()))
+    except IOError:
+      pass
+
+    return open('www/'+path+'.html').read()
 
 app = web.application(urls, globals())
