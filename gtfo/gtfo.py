@@ -26,7 +26,7 @@ class GTFO:
         return web.webapi.notfound()
 
     try:
-      return render.template('hi there', markdown(open('www/'+slug+'.mkd').read()))
+      return render.template('', markdown(open('www/'+slug+'.mkd').read()))
     except IOError:
       pass
 
