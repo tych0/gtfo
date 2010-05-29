@@ -16,6 +16,6 @@ def build_root_nav_list(path):
 			  not slug.startswith('.') and
 				ext == '.html' or ext == '.mkd'
 			):
-			navlist.append( (slug, slug) )
-	navlist = filter(lambda (x,y): x!='index', navlist)
+			navlist.append( ('/'+slug, slug) )
+	navlist = filter(lambda (x,y): x!='/index', navlist)
 	return sorted(navlist, _length_then_lex, lambda (a, b): a)
