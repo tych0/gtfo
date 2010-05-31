@@ -6,12 +6,17 @@ from util import build_root_nav_list
 PASSTHROUGH_EXTENSIONS = ['.txt', '.gpx', '.jpg', '.pdf']
 
 urls = (
+  "/config", "config",
   "/(.*)", "GTFO",
 )
        
 render = web.template.render('templates/')
 web.template.Template.globals['render'] = render
 web.template.Template.globals['navlist'] = build_root_nav_list('www')
+
+class config:
+  def GET(self):
+    return "no info yet"
 
 class GTFO:
   def GET(self, path=None):

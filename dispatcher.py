@@ -3,6 +3,6 @@
 import sys
 sys.path.append('/home/tychoa/packages/python/')
 
-from gtfo.gtfo import app
+from gtfo.handlers import app
 
 app.run()
