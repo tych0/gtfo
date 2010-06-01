@@ -40,6 +40,13 @@ def get_config(conf_file):
   if not conf.has_option('page_defaults', 'comments'):
     conf.set('page_defaults', 'comments', True)
 
+  ## misc
+  if not conf.has_section('misc'):
+    conf.add_section('misc')
+
+  if not conf.has_option('misc', 'gtf_separator'):
+    conf.set('misc', 'gtf_separator', '%%%%')
+
   with open(conf_file, 'w') as f:
     conf.write(f)
   return conf

@@ -1,7 +1,7 @@
 import web
 from markdown2 import markdown
 from os.path import splitext
-from util import build_root_nav_list, Meta
+from util import build_root_nav_list, GTF, Meta
 from gtfo import conf
 
 PASSTHROUGH_EXTENSIONS = ['.txt', '.gpx', '.jpg', '.pdf']
@@ -34,14 +34,14 @@ class GTFO:
         return web.webapi.notfound()
 
     basename = 'www/'+slug
-    meta = Meta(basename+'.meta')
     try:
-      return render.template(meta, markdown(open(basename+'.mkd').read()))
+      gtf = GTF(basename+'.gtf')
+      return render.template(gtf.meta, markdown(gtf.markdown))
     except IOError:
       pass
 
     try:
-      return render.template(meta, open('www/'+slug+'.html').read())
+      return render.template(Meta(), open('www/'+slug+'.html').read())
     except IOError:
       return web.webapi.notfound()
 

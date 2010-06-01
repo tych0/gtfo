@@ -31,19 +31,13 @@ def build_root_nav_list(path):
   return sorted(navlist, _length_then_lex, lambda (a, b): a)
 
 class Meta(object):
-  def __init__(self, fname):
+  def __init__(self, metadata=[]):
     try:
-      with open(fname) as f:
-        for line in f:
-          # parse up to the line which contains '%%%' as metadata about the
-          # file
-          if line.contains('%%%'):
-            break
-          
-          # make the information an attribute of this object
-          key = line.split('=')[0].strip()
-          value = line.split('=')[1].strip()
-          self.__dict__[key] = value
+      for line in metadata:
+        # make the information an attribute of this object
+        key = line.split('=')[0].strip()
+        value = line.split('=')[1].strip()
+        self.__dict__[key] = value
     except (IOError, IndexError):
       pass
 
@@ -53,3 +47,23 @@ class Meta(object):
       return conf.get('page_defaults', name)
     else:
       raise AttributeError(name)
+
+class GTF(object):
+  """ constructor for automatically parsing a .gtf file """
+  def __init__(self, fname):
+    """ This splits a .gtf file into it's metadata and markdown pieces,
+    for use in their respective parsers. """
+    meta = []
+    markd = []
+    in_meta = True
+  
+    with open(fname) as f:
+      for line in f:
+        if conf.get('misc', 'gtf_separator') in line:
+          in_meta = False
+        elif in_meta:
+          meta.append(line)
+        else:
+          markd.append(line)
+    self.meta = Meta(meta)
+    self.markdown = ''.join(markd)
