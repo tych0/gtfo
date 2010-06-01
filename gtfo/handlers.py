@@ -1,7 +1,7 @@
 import web
 from markdown2 import markdown
 from os.path import splitext
-from util import build_root_nav_list
+from util import build_root_nav_list, Meta
 from gtfo import conf
 
 PASSTHROUGH_EXTENSIONS = ['.txt', '.gpx', '.jpg', '.pdf']
@@ -14,6 +14,7 @@ urls = (
 render = web.template.render('templates/')
 web.template.Template.globals['render'] = render
 web.template.Template.globals['navlist'] = build_root_nav_list('www')
+web.template.Template.globals['conf'] = conf
 
 class config:
   def GET(self):
@@ -21,7 +22,8 @@ class config:
 
 class GTFO:
   def GET(self, path=None):
-    if not path: conf.get_option('navigation', 'default_slug')
+    if not path: 
+      path = conf.get('navigation', 'default_slug')
     (slug, ext) = splitext(path)
     ext = ext.lower()
 
@@ -31,13 +33,15 @@ class GTFO:
       except IOError:
         return web.webapi.notfound()
 
+    basename = 'www/'+slug
+    meta = Meta(basename+'.meta')
     try:
-      return render.template('', markdown(open('www/'+slug+'.mkd').read()))
+      return render.template(meta, markdown(open(basename+'.mkd').read()))
     except IOError:
       pass
 
     try:
-      return render.template('', open('www/'+slug+'.html').read())
+      return render.template(meta, open('www/'+slug+'.html').read())
     except IOError:
       return web.webapi.notfound()
 

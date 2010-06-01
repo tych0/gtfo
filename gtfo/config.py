@@ -1,3 +1,4 @@
+from __future__ import with_statement
 from ConfigParser import ConfigParser
 def get_config(conf_file):
   """ Return the user's conf file (or create it if it doesn't exist) and make
@@ -5,17 +6,9 @@ def get_config(conf_file):
 
   # Read the user's file if it exists. 
   conf = ConfigParser()
-  conf.read(conf_file)
-  
+  conf.read([conf_file])
+
   ### set default opts 
-  ## meta section
-  if not conf.has_section('meta'):
-    conf.add_section('meta')
-
-  # conf file version number
-  if not conf.has_option('meta', 'version'):
-    conf.set('meta', 'version', '1')
-
   ## navigation
   if not conf.has_section('navigation'):
     conf.add_section('navigation')
@@ -27,9 +20,26 @@ def get_config(conf_file):
   # add a 'home' option to the left menu?
   if not conf.has_option('navigation', 'add_home'):
     conf.set('navigation', 'add_home', 'True')
-	
-	if not conf.has_option('navigation', 'default_slug'):
-		conf.set('navigation', 'default_slug', 'index')
+  
+  if not conf.has_option('navigation', 'default_slug'):
+    conf.set('navigation', 'default_slug', 'index')
 
-  conf.write(conf_file)
+  ## default page information
+  if not conf.has_section('page_defaults'):
+    conf.add_section('page_defaults')
+
+  # who is the default author?
+  if not conf.has_option('page_defaults', 'author'):
+    conf.set('page_defaults', 'author', 'tycho')
+
+  # what is the default title?
+  if not conf.has_option('page_defaults', 'title'):
+    conf.set('page_defaults', 'title', '')
+
+  # should we allow comments by default?
+  if not conf.has_option('page_defaults', 'comments'):
+    conf.set('page_defaults', 'comments', True)
+
+  with open(conf_file, 'w') as f:
+    conf.write(f)
   return conf

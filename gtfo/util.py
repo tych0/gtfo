@@ -1,3 +1,4 @@
+from __future__ import with_statement
 import os
 from gtfo import conf
 
@@ -29,3 +30,26 @@ def build_root_nav_list(path):
     navlist = filter(lambda (x,y): x!='/index', navlist)
   return sorted(navlist, _length_then_lex, lambda (a, b): a)
 
+class Meta(object):
+  def __init__(self, fname):
+    try:
+      with open(fname) as f:
+        for line in f:
+          # parse up to the line which contains '%%%' as metadata about the
+          # file
+          if line.contains('%%%'):
+            break
+          
+          # make the information an attribute of this object
+          key = line.split('=')[0].strip()
+          value = line.split('=')[1].strip()
+          self.__dict__[key] = value
+    except (IOError, IndexError):
+      pass
+
+  def __getattr__(self, name):
+    # if we couldn't find the attribute, get the default (or fail)
+    if conf.has_option('page_defaults', name):
+      return conf.get('page_defaults', name)
+    else:
+      raise AttributeError(name)
