@@ -2,6 +2,7 @@ import web
 from markdown2 import markdown
 from os.path import splitext
 from util import build_root_nav_list
+from gtfo import conf
 
 PASSTHROUGH_EXTENSIONS = ['.txt', '.gpx', '.jpg', '.pdf']
 
@@ -20,7 +21,7 @@ class config:
 
 class GTFO:
   def GET(self, path=None):
-    if not path: path='index'
+    if not path: conf.get_option('navigation', 'default_slug')
     (slug, ext) = splitext(path)
     ext = ext.lower()
 

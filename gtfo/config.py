@@ -1,4 +1,3 @@
-import os
 from ConfigParser import ConfigParser
 def get_config(conf_file):
   """ Return the user's conf file (or create it if it doesn't exist) and make
@@ -6,8 +5,7 @@ def get_config(conf_file):
 
   # Read the user's file if it exists. 
   conf = ConfigParser()
-  if os.path.exists(conf_file):
-    conf.read(conf_file)
+  conf.read(conf_file)
   
   ### set default opts 
   ## meta section
@@ -29,6 +27,9 @@ def get_config(conf_file):
   # add a 'home' option to the left menu?
   if not conf.has_option('navigation', 'add_home'):
     conf.set('navigation', 'add_home', 'True')
+	
+	if not conf.has_option('navigation', 'default_slug'):
+		conf.set('navigation', 'default_slug', 'index')
 
   conf.write(conf_file)
   return conf
