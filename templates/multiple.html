@@ -1,4 +1,4 @@
-$def with (meta, content, comments)
+$def with (meta, content)
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" 
 "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
@@ -36,13 +36,25 @@ $def with (meta, content, comments)
         <p class="links"><a href="#" class="comments">Comments (32)</a> &nbsp;&bull;&nbsp;&nbsp; <a href="#" class="more">Read full post &raquo;</a></p>
       </div>
     </div>
-		$:render.comments(comments)
-		<div class="reply">
-			<form name="reply_form" method="post" action="$(meta.slug)/comment">
-			  $:reply_form.render()
-				<input type="submit" />
-			</form>
-		</div>
+    <div class="post">
+      <h2 class="title">Lorem Ipsum Dolor Volutpat</h2>
+
+      <p class="byline"><small>Posted by FreeCssTemplates</small></p>
+      <div class="entry">
+        <p>Curabitur tellus. Phasellus tellus turpis, iaculis in, faucibus lobortis, posuere in, lorem. Donec a ante. Donec neque purus, adipiscing id, eleifend a, cursus vel, odio. Vivamus varius justo sit amet leo. Morbi sed libero. Vestibulum blandit augue at mi. Praesent fermentum lectus eget diam. Nam cursus, orci sit amet porttitor iaculis, ipsum massa aliquet nulla, non elementum mi elit a mauris.</p>
+        <ul>
+          <li><a href="#">Magna lacus bibendum mauris</a></li>
+          <li><a href="#">Velit semper nisi molestie</a></li>
+          <li><a href="#">Magna lacus bibendum mauris</a></li>
+
+          <li><a href="#">Velit semper nisi molestie</a></li>
+        </ul>
+      </div>
+      <div class="meta">
+        <p class="links"><a href="#" class="comments">Comments (32)</a> &nbsp;&bull;&nbsp;&nbsp; <a href="#" class="more">Read full post &raquo;</a></p>
+      </div>
+
+    </div>
   </div>
   <!-- end #content -->
   <div id="sidebar">

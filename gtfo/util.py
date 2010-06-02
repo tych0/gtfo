@@ -31,7 +31,9 @@ def build_root_nav_list(path):
   return sorted(navlist, _length_then_lex, lambda (a, b): a)
 
 class Meta(object):
-  def __init__(self, metadata=[]):
+  def __init__(self, slug, metadata=[]):
+    self.slug = slug
+    print metadata
     try:
       for line in metadata:
         # make the information an attribute of this object
@@ -56,6 +58,7 @@ class GTF(object):
     meta = []
     markd = []
     in_meta = True
+    slug = os.path.splitext(fname)[0][len('www/'):]
   
     with open(fname) as f:
       for line in f:
@@ -65,5 +68,5 @@ class GTF(object):
           meta.append(line)
         else:
           markd.append(line)
-    self.meta = Meta(meta)
+    self.meta = Meta(slug, meta)
     self.markdown = ''.join(markd)
