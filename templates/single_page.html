@@ -1,0 +1,62 @@
+$def with (meta, content, comments)
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" 
+"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+    <title>tycho.ws - $meta.title</title>
+    <link rel="stylesheet" type="text/css" href="/static/style.css"/>
+  </head>
+  
+  <body>
+<div id="header">
+  <div id="logo">
+    <h1><a href="#">Tycho Andersen</a></h1>
+    <p>Home of Tycho Andersen on the internets</p>
+  </div>
+  <div id="menu">
+    <ul class="menu">
+      $for (url, title) in navlist:
+  		  <li class="first"><a href="$url">$title</a></li>
+    </ul>
+  </div>
+</div>
+<div id="page">
+  <div id="content">
+
+    <div class="post">
+      <h2 class="title">$meta.title</h2>
+
+      <p class="byline"><small>Posted by $meta.author</small></p>
+      <div class="entry">
+        $:content
+      </div>
+      <div class="meta">
+        <p class="links">$len(comments) comments </p>
+      </div>
+    </div>
+    <div class="comments">
+      $for comment in comments:
+        <div class="comment">
+          <p><a href="$comment.url">$comment.name</a> @ $comment.time:</p>
+          <p>$comment.payload</p>
+        </div>
+    </div>
+		<div class="reply">
+			<form name="reply_form" method="post" action="$(meta.slug)/comment">
+			  $:reply_form.render()
+				<input type="submit" />
+			</form>
+		</div>
+  </div>
+  <!-- end #content -->
+  $:render.sidebar()
+</div>
+<!-- end #page -->
+<div id="footer">
+  <p>&copy; 2008. All Rights Reserved. Design by <a href="http://www.freecsstemplates.org/">Free CSS Templates</a>.</p>
+</div>
+<!-- end #footer -->
+</body>
+</html>

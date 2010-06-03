@@ -57,13 +57,13 @@ class GTFO:
     try:
       gtf = GTF(basename+'.gtf')
       comments = db.select('comments', {'slug' : slug}, where="slug = $slug", order="time DESC")
-      return render.template(gtf.meta, markdown(gtf.markdown), comments)
+      return render.single_page(gtf.meta, markdown(gtf.markdown), list(comments))
     except IOError:
       pass
 
     try:
       print 'falling back to html'
-      return render.template(Meta(slug), open('www/'+slug+'.html').read(), [])
+      return render.single_page(Meta(slug), open('www/'+slug+'.html').read(), [])
     except IOError:
       return web.webapi.notfound()
 
