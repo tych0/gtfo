@@ -40,12 +40,33 @@ def get_config(conf_file):
   if not conf.has_option('page_defaults', 'comments'):
     conf.set('page_defaults', 'comments', True)
 
+  # what are the default tags, if any?
+  if not conf.has_option('page_defaults', 'tags'):
+    conf.set('page_defaults', 'tags', '')
+
   ## misc
   if not conf.has_section('misc'):
     conf.add_section('misc')
 
   if not conf.has_option('misc', 'gtf_separator'):
     conf.set('misc', 'gtf_separator', '%%%%')
+
+  if not conf.has_option('misc', 'title_prefix'):
+    conf.set('misc', 'title_prefix', 'tycho.ws - ')
+
+  ## blog
+  if not conf.has_section('blog'):
+    conf.add_section('blog')
+
+  if not conf.has_option('blog', 'posts_on_front_page'):
+    conf.set('blog', 'posts_on_front_page', 10)
+
+  ## sidebar
+  if not conf.has_section('sidebar'):
+    conf.add_section('sidebar')
+
+  if not conf.has_option('sidebar', 'blog_posts_on_sidebar'):
+    conf.set('sidebar', 'blog_posts_on_sidebar', 5)
 
   with open(conf_file, 'w') as f:
     conf.write(f)

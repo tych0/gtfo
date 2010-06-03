@@ -1,34 +1,17 @@
-$def with (meta, content, comments)
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" 
-"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-    <title>tycho.ws - $meta.title</title>
-    <link rel="stylesheet" type="text/css" href="/static/style.css"/>
-  </head>
-  
-  <body>
-<div id="header">
-  <div id="logo">
-    <h1><a href="#">Tycho Andersen</a></h1>
-    <p>Home of Tycho Andersen on the internets</p>
-  </div>
-  <div id="menu">
-    <ul class="menu">
-      $for (url, title) in navlist:
-  		  <li class="first"><a href="$url">$title</a></li>
-    </ul>
-  </div>
-</div>
+$def with (meta, content, comments, reply_form)
+$:render.header(meta)
 <div id="page">
   <div id="content">
 
     <div class="post">
       <h2 class="title">$meta.title</h2>
 
-      <p class="byline"><small>Posted by $meta.author</small></p>
+      <p class="byline">
+        <small>Posted by $meta.author
+        $if meta.date:
+          on $(meta.date)
+        </small>
+      </p>
       <div class="entry">
         $:content
       </div>
@@ -36,6 +19,16 @@ $def with (meta, content, comments)
         <p class="links">$len(comments) comments </p>
       </div>
     </div>
+
+    $# This is a little goofy... since form.validates() modifies the internal
+    $# state of the form (and apparently things are not executed inside templates
+    $# in-order), we simply check the note attribute of the form, since if validate
+    $# has been called it wil be set with some message, and if not it won't.
+    $if reply_form.note:
+      <script type="text/javascript">
+        document.reply_form.name.focus();
+      </script>
+ 
     <div class="comments">
       $for comment in comments:
         <div class="comment">
@@ -43,10 +36,10 @@ $def with (meta, content, comments)
           <p>$comment.payload</p>
         </div>
     </div>
-		<div class="reply">
-			<form name="reply_form" method="post" action="$(meta.slug)/comment">
+		<div id="reply_id" class="reply" style="padding: 10px;">
+			<form name="reply_form" method="post" action="/$(meta.slug)/comment">
 			  $:reply_form.render()
-				<input type="submit" />
+				<input type="submit" value="Post Reply" />
 			</form>
 		</div>
   </div>
@@ -54,9 +47,4 @@ $def with (meta, content, comments)
   $:render.sidebar()
 </div>
 <!-- end #page -->
-<div id="footer">
-  <p>&copy; 2008. All Rights Reserved. Design by <a href="http://www.freecsstemplates.org/">Free CSS Templates</a>.</p>
-</div>
-<!-- end #footer -->
-</body>
-</html>
+$:render.footer()

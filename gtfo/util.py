@@ -1,5 +1,8 @@
 from __future__ import with_statement
+
 import os
+from datetime import date
+
 from gtfo import conf
 
 def _length_then_lex(f, s):
@@ -30,10 +33,48 @@ def build_root_nav_list(path):
     navlist = filter(lambda (x,y): x!='/index', navlist)
   return sorted(navlist, _length_then_lex, lambda (a, b): a)
 
+def _last_n_blog_posts(n, db):
+  year = date.today().year
+  posts = []
+  while year > 1990: # nobody used the internet for 1990, right? ;-)
+    month = date.today().month
+    while month > 0:
+      try:
+        entries = os.listdir('www/'+str(year)+'/'+str(month))
+        entries = map(lambda e: GTF(e), entries)
+        entries = sorted(entries, cmp, lambda g: g.meta.date)
+        posts += entries
+        if len(posts) >= n:
+          posts = posts[n:]
+          break
+      except (IOError, OSError):
+        pass
+      month = month - 1
+    year = year - 1
+  return posts
+
+def get_front_page_posts(db):
+  return _last_n_blog_posts(conf.getint('blog', 'posts_on_front_page'), db)
+
+def get_sidebar_posts(db):
+  return _last_n_blog_posts(conf.getint('sidebar', 'blog_posts_on_sidebar'), db)
+  
+def recent_comments(db):
+  comments = list(db.select('comments', limit=10, order="time DESC"))
+  meta = map(lambda row: Meta(row.slug, parse=True), comments)
+  return zip(comments, meta)
+
 class Meta(object):
-  def __init__(self, slug, metadata=[]):
+  def __init__(self, slug, metadata=[], parse=False):
     self.slug = slug
-    print metadata
+    self.date = None
+
+    if parse:
+      with open('www/'+slug+'.gtf') as f:
+        for line in f:
+          if conf.get('misc', 'gtf_separator') in line:
+            break
+          metadata.append(line)
     try:
       for line in metadata:
         # make the information an attribute of this object

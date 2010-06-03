@@ -1,8 +1,12 @@
-import web
-from markdown2 import markdown
 from os.path import splitext
-from util import build_root_nav_list, GTF, Meta
+
+import web
+
+from markdown2 import markdown
+
 from gtfo import conf
+from util import *
+from comments import reply_form
 
 # TODO: move this to a config option
 PASSTHROUGH_EXTENSIONS = ['.txt', '.gpx', '.jpg', '.pdf']
@@ -13,14 +17,6 @@ urls = (
   "/(.*)/comment", "Comment",
   "/(.*)", "GTFO",
 )
-       
-# set up some 'globals' for use inside of the templates
-from comments import reply_form
-render = web.template.render('templates/')
-web.template.Template.globals['render'] = render
-web.template.Template.globals['navlist'] = build_root_nav_list('www')
-web.template.Template.globals['conf'] = conf
-web.template.Template.globals['reply_form'] = reply_form
 
 # set up the DB
 # sqlite3 gtfo.db "create table comments (
@@ -28,6 +24,15 @@ web.template.Template.globals['reply_form'] = reply_form
 #    name TEXT, url TEXT, email TEXT, payload TEXT,
 #    time DATETIME DEFAULT(DATETIME('NOW')));"
 db = web.database(dbn='sqlite', db='gtfo.db')
+
+# set up some 'globals' for use inside of the templates
+render = web.template.render('templates/')
+web.template.Template.globals['render'] = render
+web.template.Template.globals['navlist'] = build_root_nav_list('www')
+web.template.Template.globals['conf'] = conf
+web.template.Template.globals['get_front_page_posts'] = lambda: get_front_page_posts(db)
+web.template.Template.globals['get_sidebar_posts'] = lambda: get_sidebar_posts(db)
+web.template.Template.globals['recent_comments'] = lambda: recent_comments(db)
 
 # TODO: implement
 class config:
@@ -39,7 +44,7 @@ class GTFO:
   compatability (and/or users who like to have more control over certain pages)
   it will try to render raw .html documents matching the requested slug before
   it tries to render the corrosponding .gtf file. """
-  def GET(self, path=None):
+  def GET(self, path=None, reply=reply_form()):
     if not path: 
       path = conf.get('navigation', 'default_slug')
     (slug, ext) = splitext(path)
@@ -54,16 +59,19 @@ class GTFO:
     # TODO: this ({www/, rendering .html first}) should probably be
     # configurable
     basename = 'www/'+slug
+    comments = db.select('comments', {'slug' : slug}, where="slug = $slug", order="time DESC")
     try:
       gtf = GTF(basename+'.gtf')
-      comments = db.select('comments', {'slug' : slug}, where="slug = $slug", order="time DESC")
-      return render.single_page(gtf.meta, markdown(gtf.markdown), list(comments))
+      return render.single_page(gtf.meta, markdown(gtf.markdown), list(comments), reply)
     except IOError:
       pass
 
     try:
-      print 'falling back to html'
-      return render.single_page(Meta(slug), open('www/'+slug+'.html').read(), [])
+      return render.single_page(Meta(slug), 
+                                open('www/'+slug+'.html').read(), 
+                                list(comments), 
+                                reply
+                               )
     except IOError:
       return web.webapi.notfound()
 
@@ -76,8 +84,10 @@ class Comment:
 
   def POST(self, path):
     reply = reply_form(web.input())
-    print reply.d
-    db.insert('comments', slug=path, **reply.d)
-    return web.redirect('/'+path)
+    if not reply.validates():
+      return GTFO().GET(path, reply)
+    else:
+      db.insert('comments', slug=path, **reply.d)
+      return web.redirect('/'+path)
 
 app = web.application(urls, globals())

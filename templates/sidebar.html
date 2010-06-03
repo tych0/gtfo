@@ -2,43 +2,28 @@
     <div id="sidebar-bgtop"></div>
     <div id="sidebar-content">
       <ul>
-        <li id="search">
-          <h2>Search</h2>
-
-          <form method="get" action="">
-            <fieldset>
-            <input type="text" id="s" name="s" value="" />
-            <input type="submit" id="x" value="Search" />
-            </fieldset>
-          </form>
-        </li>
         <li>
-          <h2>Lorem Ipsum</h2>
-
+          <h2>Recent Posts</h2>
           <ul>
-            <li><a href="#">Fusce dui neque fringilla</a></li>
-            <li><a href="#">Eget tempor eget nonummy</a></li>
-            <li><a href="#">Magna lacus bibendum mauris</a></li>
-            <li><a href="#">Nec metus sed donec</a></li>
-            <li><a href="#">Magna lacus bibendum mauris</a></li>
-
-            <li><a href="#">Velit semper nisi molestie</a></li>
-            <li><a href="#">Eget tempor eget nonummy</a></li>
+            $for post in get_sidebar_posts():
+              <li><a href="/$post.meta.slug">$post.meta.title</a> by $post.meta.author</li>
           </ul>
         </li>
         <li>
-          <h2>Volutpat Dolore</h2>
+          <h2>Recent Comments</h2>
           <ul>
-
-            <li><a href="#">Nec metus sed donec</a></li>
-            <li><a href="#">Magna lacus bibendum mauris</a></li>
-            <li><a href="#">Velit semper nisi molestie</a></li>
-            <li><a href="#">Eget tempor eget nonummy</a></li>
-            <li><a href="#">Nec metus sed donec</a></li>
-            <li><a href="#">Magna lacus bibendum mauris</a></li>
-
-            <li><a href="#">Velit semper nisi molestie</a></li>
+            $for (comment, slug_meta) in recent_comments():
+              <li>$comment.name
+              on 
+                <a href="/$(slug_meta.slug)">$slug_meta.title</a>
+              </li>
           </ul>
+        </li>
+        <li>
+          <h2>Tags</h2>
+          <ul>
+            <li>foo</li>
+          <ul>
         </li>
       </ul>
     </div>

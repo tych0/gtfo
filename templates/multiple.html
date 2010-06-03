@@ -1,27 +1,5 @@
 $def with (meta, content)
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" 
-"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-    <title>tycho.ws - $meta.title</title>
-    <link rel="stylesheet" type="text/css" href="/static/style.css"/>
-  </head>
-  
-  <body>
-<div id="header">
-  <div id="logo">
-    <h1><a href="#">Tycho Andersen</a></h1>
-    <p>Home of Tycho Andersen on the internets</p>
-  </div>
-  <div id="menu">
-    <ul class="menu">
-      $for (url, title) in navlist:
-  		  <li class="first"><a href="$url">$title</a></li>
-    </ul>
-  </div>
-</div>
+$:render.header(meta)
 <div id="page">
   <div id="content">
 
@@ -57,59 +35,7 @@ $def with (meta, content)
     </div>
   </div>
   <!-- end #content -->
-  <div id="sidebar">
-    <div id="sidebar-bgtop"></div>
-    <div id="sidebar-content">
-      <ul>
-        <li id="search">
-          <h2>Search</h2>
-
-          <form method="get" action="">
-            <fieldset>
-            <input type="text" id="s" name="s" value="" />
-            <input type="submit" id="x" value="Search" />
-            </fieldset>
-          </form>
-        </li>
-        <li>
-          <h2>Lorem Ipsum</h2>
-
-          <ul>
-            <li><a href="#">Fusce dui neque fringilla</a></li>
-            <li><a href="#">Eget tempor eget nonummy</a></li>
-            <li><a href="#">Magna lacus bibendum mauris</a></li>
-            <li><a href="#">Nec metus sed donec</a></li>
-            <li><a href="#">Magna lacus bibendum mauris</a></li>
-
-            <li><a href="#">Velit semper nisi molestie</a></li>
-            <li><a href="#">Eget tempor eget nonummy</a></li>
-          </ul>
-        </li>
-        <li>
-          <h2>Volutpat Dolore</h2>
-          <ul>
-
-            <li><a href="#">Nec metus sed donec</a></li>
-            <li><a href="#">Magna lacus bibendum mauris</a></li>
-            <li><a href="#">Velit semper nisi molestie</a></li>
-            <li><a href="#">Eget tempor eget nonummy</a></li>
-            <li><a href="#">Nec metus sed donec</a></li>
-            <li><a href="#">Magna lacus bibendum mauris</a></li>
-
-            <li><a href="#">Velit semper nisi molestie</a></li>
-          </ul>
-        </li>
-      </ul>
-    </div>
-    <div id="sidebar-bgbtm"></div>
-  </div>
-  <!-- end #sidebar -->
-
+  $:render.sidebar()
 </div>
 <!-- end #page -->
-<div id="footer">
-  <p>&copy; 2008. All Rights Reserved. Design by <a href="http://www.freecsstemplates.org/">Free CSS Templates</a>.</p>
-</div>
-<!-- end #footer -->
-</body>
-</html>
+$:render.footer()
