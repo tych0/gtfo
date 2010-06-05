@@ -61,20 +61,19 @@ def get_sidebar_posts(db):
   
 def recent_comments(db):
   comments = list(db.select('comments', limit=10, order="time DESC"))
-  meta = map(lambda row: Meta(row.slug, parse=True), comments)
+  meta = []
+  for comment in comments:
+    try:
+      meta.append(GTF(comment.slug).meta)
+    except IOError:
+      meta.append(Meta(comment.slug))
   return zip(comments, meta)
 
 class Meta(object):
-  def __init__(self, slug, metadata=[], parse=False):
+  def __init__(self, slug, metadata=[]):
     self.slug = slug
     self.date = None
 
-    if parse:
-      with open('www/'+slug+'.gtf') as f:
-        for line in f:
-          if conf.get('misc', 'gtf_separator') in line:
-            break
-          metadata.append(line)
     try:
       for line in metadata:
         # make the information an attribute of this object
@@ -93,15 +92,14 @@ class Meta(object):
 
 class GTF(object):
   """ constructor for automatically parsing a .gtf file """
-  def __init__(self, fname):
+  def __init__(self, slug):
     """ This splits a .gtf file into it's metadata and markdown pieces,
     for use in their respective parsers. """
     meta = []
     markd = []
     in_meta = True
-    slug = os.path.splitext(fname)[0][len('www/'):]
   
-    with open(fname) as f:
+    with open('www/'+slug+'.gtf') as f:
       for line in f:
         if conf.get('misc', 'gtf_separator') in line:
           in_meta = False

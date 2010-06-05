@@ -58,21 +58,20 @@ class GTFO:
 
     # TODO: this ({www/, rendering .html first}) should probably be
     # configurable
-    basename = 'www/'+slug
-    comments = db.select('comments', {'slug' : slug}, where="slug = $slug", order="time DESC")
+    comments = list(db.select('comments', {'slug' : slug}, where="slug = $slug", order="time DESC"))
     try:
-      gtf = GTF(basename+'.gtf')
-      return render.single_page(gtf.meta, markdown(gtf.markdown), list(comments), reply)
+      gtf = GTF(slug)
+      return render.single_page(gtf.meta, markdown(gtf.markdown), comments, reply)
     except IOError:
       pass
 
     try:
       return render.single_page(Meta(slug), 
                                 open('www/'+slug+'.html').read(), 
-                                list(comments), 
+                                comments, 
                                 reply
                                )
-    except IOError:
+    except IOError, e:
       return web.webapi.notfound()
 
 class Comment:
@@ -87,6 +86,7 @@ class Comment:
     if not reply.validates():
       return GTFO().GET(path, reply)
     else:
+      gtf = GTF(slug)
       db.insert('comments', slug=path, **reply.d)
       return web.redirect('/'+path)
 
