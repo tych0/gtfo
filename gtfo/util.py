@@ -3,6 +3,8 @@ from __future__ import with_statement
 import os
 from datetime import date
 
+from markdown2 import markdown
+
 from gtfo import conf
 
 def _length_then_lex(f, s):
@@ -33,31 +35,55 @@ def build_root_nav_list(path):
     navlist = filter(lambda (x,y): x!='/index', navlist)
   return sorted(navlist, _length_then_lex, lambda (a, b): a)
 
-def _last_n_blog_posts(n, db):
+def _last_n_blog_posts(n):
   year = date.today().year
   posts = []
   while year > 1990: # nobody used the internet for 1990, right? ;-)
-    month = date.today().month
+    month = 12
     while month > 0:
       try:
-        entries = os.listdir('www/'+str(year)+'/'+str(month))
-        entries = map(lambda e: GTF(e), entries)
+        month_str = '%02d' % month
+        slug = 'blog/'+str(year)+'/'+month_str
+        entries = os.listdir('www/'+slug)
+        entries = filter(lambda e: not os.path.isdir(e) and
+                                   not e.startswith('.') and
+                                   e.lower().endswith('.gtf'),
+                         entries)
+        entries = map(lambda e: GTF(slug+'/'+os.path.splitext(e)[0]), entries)
         entries = sorted(entries, cmp, lambda g: g.meta.date)
         posts += entries
         if len(posts) >= n:
           posts = posts[n:]
-          break
-      except (IOError, OSError):
+          return posts
+      except (IOError, OSError) as e:
         pass
       month = month - 1
     year = year - 1
   return posts
 
 def get_front_page_posts(db):
-  return _last_n_blog_posts(conf.getint('blog', 'posts_on_front_page'), db)
+  gtf_files = _last_n_blog_posts(conf.getint('blog', 'posts_on_front_page'))
+  posts = []
+  for post in gtf_files:
+    d = {}
+    d['title'] = post.meta.title
+    d['author'] = post.meta.author
+    d['date'] = post.meta.date
+    d['content'] = post.raw_content_html()
+    d['slug'] = post.meta.slug
+    d['comment_count'] = db.select('comments', 
+                                   vars={'slug':post.meta.slug},
+                                   what='COUNT(*) as count',
+                                   where='slug=$slug',
+                                  )[0].count
+    posts.append(d)
+  return posts
 
-def get_sidebar_posts(db):
-  return _last_n_blog_posts(conf.getint('sidebar', 'blog_posts_on_sidebar'), db)
+def get_sidebar_posts():
+  return _last_n_blog_posts(conf.getint('sidebar', 'blog_posts_on_sidebar'))
+
+def get_comments_for_slug(slug, db):
+  return list(db.select('comments', {'slug' : slug}, where="slug = $slug", order="time DESC"))
   
 def recent_comments(db):
   comments = list(db.select('comments', limit=10, order="time DESC"))
@@ -109,3 +135,6 @@ class GTF(object):
           markd.append(line)
     self.meta = Meta(slug, meta)
     self.markdown = ''.join(markd)
+  
+  def raw_content_html(self):
+    return markdown(self.markdown)

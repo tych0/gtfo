@@ -1,0 +1,31 @@
+$def with (meta, posts)
+$:render.header(meta)
+<div id="page">
+  <div id="content">
+
+  $for post in posts:
+    <div class="post">
+      <h2 class="title">$post['title']</h2>
+      <p class="byline">
+        <small>Posted by $post['author']
+        $if post['date']:
+          on $post['date']
+        </small>
+      </p>
+      <div class="entry">
+        $:post['content']
+      </div>
+      <div class="meta">
+        <p class="links">
+          <a href="/$post['slug']" class="comments">Comments
+          ($post['comment_count'])</a> &nbsp;&bull;&nbsp;&nbsp;
+          <a href="/$post['slug']" class="more">Read full post &raquo;</a>
+        </p>
+      </div>
+    </div>
+  </div>
+  <!-- end #content -->
+  $:render.sidebar()
+</div>
+<!-- end #page -->
+$:render.footer()

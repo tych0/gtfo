@@ -14,6 +14,7 @@ PASSTHROUGH_EXTENSIONS = ['.txt', '.gpx', '.jpg', '.pdf']
 # our URL structure
 urls = (
   "/config", "config",
+  "/blog", "Blog",
   "/(.*)/comment", "Comment",
   "/(.*)", "GTFO",
 )
@@ -31,7 +32,7 @@ web.template.Template.globals['render'] = render
 web.template.Template.globals['navlist'] = build_root_nav_list('www')
 web.template.Template.globals['conf'] = conf
 web.template.Template.globals['get_front_page_posts'] = lambda: get_front_page_posts(db)
-web.template.Template.globals['get_sidebar_posts'] = lambda: get_sidebar_posts(db)
+web.template.Template.globals['get_sidebar_posts'] = lambda: get_sidebar_posts()
 web.template.Template.globals['recent_comments'] = lambda: recent_comments(db)
 
 # TODO: implement
@@ -58,7 +59,7 @@ class GTFO:
 
     # TODO: this ({www/, rendering .html first}) should probably be
     # configurable
-    comments = list(db.select('comments', {'slug' : slug}, where="slug = $slug", order="time DESC"))
+    comments = get_comments_for_slug(slug, db)
     try:
       gtf = GTF(slug)
       return render.single_page(gtf.meta, markdown(gtf.markdown), comments, reply)
@@ -74,6 +75,12 @@ class GTFO:
     except IOError, e:
       return web.webapi.notfound()
 
+class Blog:
+  def GET(self):
+    meta = Meta('blog')
+    meta.title = 'Blog'
+    return render.blog(meta, get_front_page_posts(db))
+
 class Comment:
   def GET(self, path):
     # If someone creates a slug ending in 'comment', we might end up here. In
@@ -86,7 +93,7 @@ class Comment:
     if not reply.validates():
       return GTFO().GET(path, reply)
     else:
-      gtf = GTF(slug)
+      gtf = GTF(path)
       db.insert('comments', slug=path, **reply.d)
       return web.redirect('/'+path)
 
