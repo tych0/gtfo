@@ -1,0 +1,23 @@
+$def with (meta)
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" 
+"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+    <title>tycho.ws - $meta.title</title>
+    <link rel="stylesheet" type="text/css" href="/static/style.css"/>
+  </head>
+<body>
+<div id="header">
+  <div id="logo">
+    <h1><a href="#">Tycho Andersen</a></h1>
+    <p>Home of Tycho Andersen on the internets</p>
+  </div>
+  <div id="menu">
+    <ul class="menu">
+      $for (url, title) in navlist:
+  		  <li class="first"><a href="$url">$title</a></li>
+    </ul>
+  </div>
+</div>
