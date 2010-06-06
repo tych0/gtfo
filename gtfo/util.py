@@ -23,6 +23,8 @@ def build_root_nav_list(path):
 
   if conf.getboolean('navigation', 'add_home'):
     navlist.append(('/', 'home'))
+  if conf.getboolean('navigation', 'add_blog'):
+    navlist.append(('/blog', 'blog'))
 
   for f in files:
     (slug, ext) = os.path.splitext(f)
@@ -55,7 +57,7 @@ def _last_n_blog_posts(n):
         if len(posts) >= n:
           posts = posts[n:]
           return posts
-      except (IOError, OSError) as e:
+      except (IOError, OSError):
         pass
       month = month - 1
     year = year - 1

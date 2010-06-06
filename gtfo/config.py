@@ -9,18 +9,23 @@ def get_config(conf_file):
   conf.read([conf_file])
 
   ### set default opts 
-  ## navigation
+  ## navigation (main menu)
   if not conf.has_section('navigation'):
     conf.add_section('navigation')
 
-  # hide the 'index.{mkd,html}' file from the left menu?
+  # hide the 'index.{mkd,html}' file from the top menu?
   if not conf.has_option('navigation', 'remove_index'):
     conf.set('navigation', 'remove_index', 'True')
 
-  # add a 'home' option to the left menu?
+  # add a 'home' option to the top menu?
   if not conf.has_option('navigation', 'add_home'):
     conf.set('navigation', 'add_home', 'True')
   
+  # should we show a link to 'blog' on the top menu?
+  if not conf.has_option('navigation', 'add_blog')
+    conf.set('navigation', 'add_blog', True)
+
+  # where do we send the user by default?
   if not conf.has_option('navigation', 'default_slug'):
     conf.set('navigation', 'default_slug', 'index')
 
