@@ -22,7 +22,7 @@ def get_config(conf_file):
     conf.set('navigation', 'add_home', 'True')
   
   # should we show a link to 'blog' on the top menu?
-  if not conf.has_option('navigation', 'add_blog')
+  if not conf.has_option('navigation', 'add_blog'):
     conf.set('navigation', 'add_blog', True)
 
   # where do we send the user by default?
