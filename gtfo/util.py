@@ -2,6 +2,7 @@ from __future__ import with_statement
 
 import os
 from datetime import date
+from itertools import islice
 
 from markdown2 import markdown
 
@@ -37,7 +38,7 @@ def build_root_nav_list(path):
     navlist = filter(lambda (x,y): x!='/index', navlist)
   return sorted(navlist, _length_then_lex, lambda (a, b): a)
 
-def _last_n_blog_posts(n):
+def _get_blog_posts():
   year = date.today().year
   posts = []
   while year > 1990: # nobody used the internet for 1990, right? ;-)
@@ -53,15 +54,18 @@ def _last_n_blog_posts(n):
                          entries)
         entries = map(lambda e: GTF(slug+'/'+os.path.splitext(e)[0]), entries)
         entries = sorted(entries, cmp, lambda g: g.meta.date)
-        posts += entries
-        if len(posts) >= n:
-          posts = posts[n:]
-          return posts
+        for entry in entries:
+          yield entry
       except (IOError, OSError):
         pass
       month = month - 1
     year = year - 1
-  return posts
+
+def get_sidebar_calendar():
+  pass
+
+def _last_n_blog_posts(n):
+  return islice(_get_blog_posts(), n)
 
 def get_front_page_posts(db):
   gtf_files = _last_n_blog_posts(conf.getint('blog', 'posts_on_front_page'))
