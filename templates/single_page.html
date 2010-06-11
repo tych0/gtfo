@@ -32,7 +32,13 @@ $:render.header(meta)
     <div class="comments">
       $for comment in comments:
         <div class="comment">
-          <p><a href="$comment.url">$comment.name</a> @ $comment.time:</p>
+          <p>
+            $if comment.url:
+              <a href="$comment.url">$comment.name</a> 
+            $else:
+              $comment.name
+            @ $comment.time:
+          </p>
           <p>$comment.payload</p>
         </div>
     </div>
