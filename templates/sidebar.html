@@ -20,10 +20,17 @@
           </ul>
         </li>
         <li>
+          <h2>Archives</h2>
+          <ul>
+          $for (month, postcount) in get_sidebar_calendar():
+            <li><a href="/blog/$month">$month ($postcount)</a></li>
+          </ul>
+        <li>
           <h2>Tags</h2>
-          <ul>
-            <li>foo</li>
-          <ul>
+					<p>
+          $for tag in get_tags():
+            <a href="/tags/$tag">$tag</a>
+					</p>
         </li>
       </ul>
     </div>
