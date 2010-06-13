@@ -32,7 +32,9 @@ web.template.Template.globals['render'] = render
 web.template.Template.globals['navlist'] = build_root_nav_list('www')
 web.template.Template.globals['conf'] = conf
 web.template.Template.globals['get_front_page_posts'] = lambda: get_front_page_posts(db)
-web.template.Template.globals['get_sidebar_posts'] = lambda: get_sidebar_posts()
+web.template.Template.globals['get_sidebar_posts'] = get_sidebar_posts
+web.template.Template.globals['get_sidebar_calendar'] = get_sidebar_calendar
+web.template.Template.globals['get_tags'] = get_tags
 web.template.Template.globals['recent_comments'] = lambda: recent_comments(db)
 
 # TODO: implement
@@ -57,6 +59,11 @@ class GTFO:
       except IOError:
         return web.webapi.notfound()
 
+    if os.path.isdir('www/'+slug.replace('-', '/')):
+      meta = Meta(slug)
+      meta.title = 'Posts for the month of '+slug
+      return render.multiple_pages(meta, get_posts_as_dicts(get_gtf_in_dir(slug.replace('-', '/')), db))
+
     # TODO: this ({www/, rendering .html first}) should probably be
     # configurable
     comments = get_comments_for_slug(slug, db)
@@ -79,7 +86,7 @@ class Blog:
   def GET(self):
     meta = Meta('blog')
     meta.title = 'Blog'
-    return render.blog(meta, get_front_page_posts(db))
+    return render.multiple_pages(meta, get_front_page_posts(db))
 
 class Comment:
   def GET(self, path):

@@ -3,6 +3,7 @@ from __future__ import with_statement
 import os
 from datetime import date
 from itertools import islice
+from collections import defaultdict
 
 from markdown2 import markdown
 
@@ -38,37 +39,7 @@ def build_root_nav_list(path):
     navlist = filter(lambda (x,y): x!='/index', navlist)
   return sorted(navlist, _length_then_lex, lambda (a, b): a)
 
-def _get_blog_posts():
-  year = date.today().year
-  posts = []
-  while year > 1990: # nobody used the internet for 1990, right? ;-)
-    month = 12
-    while month > 0:
-      try:
-        month_str = '%02d' % month
-        slug = 'blog/'+str(year)+'/'+month_str
-        entries = os.listdir('www/'+slug)
-        entries = filter(lambda e: not os.path.isdir(e) and
-                                   not e.startswith('.') and
-                                   e.lower().endswith('.gtf'),
-                         entries)
-        entries = map(lambda e: GTF(slug+'/'+os.path.splitext(e)[0]), entries)
-        entries = sorted(entries, cmp, lambda g: g.meta.date)
-        for entry in entries:
-          yield entry
-      except (IOError, OSError):
-        pass
-      month = month - 1
-    year = year - 1
-
-def get_sidebar_calendar():
-  pass
-
-def _last_n_blog_posts(n):
-  return islice(_get_blog_posts(), n)
-
-def get_front_page_posts(db):
-  gtf_files = _last_n_blog_posts(conf.getint('blog', 'posts_on_front_page'))
+def get_posts_as_dicts(gtf_files, db):
   posts = []
   for post in gtf_files:
     d = {}
@@ -84,6 +55,54 @@ def get_front_page_posts(db):
                                   )[0].count
     posts.append(d)
   return posts
+
+def get_gtf_in_dir(slug):
+  entries = os.listdir('www/'+slug)
+  entries = filter(lambda e: not os.path.isdir(e) and
+                             not e.startswith('.') and
+                             e.lower().endswith('.gtf'),
+                   entries)
+  entries = map(lambda e: GTF(slug+'/'+os.path.splitext(e)[0]), entries)
+  entries = sorted(entries, cmp, lambda g: g.meta.date)
+  return entries
+
+def _get_blog_posts():
+  year = date.today().year
+  posts = []
+  while year > 1990: # nobody used the internet for 1990, right? ;-)
+    month = 12
+    while month > 0:
+      try:
+        month_str = '%02d' % month
+        slug = 'blog/'+str(year)+'/'+month_str
+        for entry in get_gtf_in_dir(slug):
+          yield entry
+      except (IOError, OSError):
+        pass
+      month = month - 1
+    year = year - 1
+
+def get_sidebar_calendar():
+  months = defaultdict(lambda: 0)
+  for post in _get_blog_posts():
+    post_month = post.meta.date[:-3] # dates are in YYYY-MM-DD format
+    months[post_month] = months[post_month] + 1
+  return sorted(months.items(), key=lambda (k, v): k)
+
+def _last_n_blog_posts(n):
+  return islice(_get_blog_posts(), n)
+
+def get_front_page_posts(db):
+  gtf_files = _last_n_blog_posts(conf.getint('blog', 'posts_on_front_page'))
+  return get_posts_as_dicts(gtf_files, db)
+
+def get_tags():
+  s = set()
+  for post in _get_blog_posts():
+    if hasattr(post.meta, 'tags'):
+      for tag in post.meta.tags.split(','):
+        s.add(tag.strip())
+  return s
 
 def get_sidebar_posts():
   return _last_n_blog_posts(conf.getint('sidebar', 'blog_posts_on_sidebar'))
