@@ -71,6 +71,7 @@ def _get_blog_posts():
   posts = []
   while year > 1990: # nobody used the internet for 1990, right? ;-)
     month = 12
+    months = []
     while month > 0:
       try:
         month_str = '%02d' % month
@@ -108,7 +109,7 @@ def get_posts_by_tag(tag):
   posts = []
   for post in _get_blog_posts():
     if hasattr(post.meta, 'tags'):
-      if tag in [ t.strip() for t in post.meta.tags.split() ]:
+      if tag in [ t.strip() for t in post.meta.tags.split(',') ]:
         posts.append(post)
   return sorted(posts, key=lambda p: p.meta.date)
 
