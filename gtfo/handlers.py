@@ -51,6 +51,7 @@ class GTFO(object):
   def GET(self, path=None, reply=reply_form()):
     if not path: 
       path = conf.get('navigation', 'default_slug')
+      return web.redirect('/'+path)
     (slug, ext) = splitext(path)
     ext = ext.lower()
 
