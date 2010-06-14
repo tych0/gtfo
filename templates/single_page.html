@@ -16,7 +16,10 @@ $:render.header(meta)
         $:content
       </div>
       <div class="meta">
-        <p class="links">$len(comments) comments </p>
+        <p class="links">$len(comments) comments 
+          &nbsp;&bull;&nbsp;&nbsp;
+          Tags: 
+          $:', '.join([ '<a href="/tags/%s">%s</a>' % (tag, tag) for tag.strip() in meta.tags.split(',') ])
       </div>
     </div>
 
