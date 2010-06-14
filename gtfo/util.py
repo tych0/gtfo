@@ -48,7 +48,7 @@ def get_posts_as_dicts(gtf_files, db):
     d['date'] = post.meta.date
     d['content'] = post.raw_content_html()
     d['slug'] = post.meta.slug
-    d['tags'] = [ t.strip() for t in post.meta.tags.split() ]
+    d['tags'] = [ t.strip() for t in post.meta.tags.split(',') ]
     d['comment_count'] = db.select('comments', 
                                    vars={'slug':post.meta.slug},
                                    what='COUNT(*) as count',
