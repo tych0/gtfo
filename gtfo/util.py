@@ -32,7 +32,7 @@ def build_root_nav_list(path):
     (slug, ext) = os.path.splitext(f)
     ext = ext.lower()
     if( not slug.startswith('.') and
-        ext == '.html' or ext == '.mkd'
+        ext == '.html' or ext == '.gtf'
       ):
       navlist.append( ('/'+slug, slug) )
   if conf.getboolean('navigation', 'remove_index'):
