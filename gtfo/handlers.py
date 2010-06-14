@@ -15,6 +15,7 @@ PASSTHROUGH_EXTENSIONS = ['.txt', '.gpx', '.jpg', '.pdf']
 urls = (
   "/config", "config",
   "/blog", "Blog",
+  "/tags/(.*)", "Tags",
   "/(.*)/comment", "Comment",
   "/(.*)", "GTFO",
 )
@@ -42,7 +43,7 @@ class config:
   def GET(self):
     return "no info yet"
 
-class GTFO:
+class GTFO(object):
   """ This class handles the bulk of the GTFO requests. For backwards
   compatability (and/or users who like to have more control over certain pages)
   it will try to render raw .html documents matching the requested slug before
@@ -82,13 +83,19 @@ class GTFO:
     except IOError, e:
       return web.webapi.notfound()
 
-class Blog:
+class Tags(object):
+  def GET(self, tag):
+    meta = Meta(tag)
+    meta.title = 'Tag: '+tag
+    return render.multiple_pages(meta, get_posts_as_dicts(get_posts_by_tag(tag), db))
+
+class Blog(object):
   def GET(self):
     meta = Meta('blog')
     meta.title = 'Blog'
     return render.multiple_pages(meta, get_front_page_posts(db))
 
-class Comment:
+class Comment(object):
   def GET(self, path):
     # If someone creates a slug ending in 'comment', we might end up here. In
     # that case, we should really just render that slug. If users are trying to
