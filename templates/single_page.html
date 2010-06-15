@@ -19,7 +19,7 @@ $:render.header(meta)
         <p class="links">$len(comments) comments 
           &nbsp;&bull;&nbsp;&nbsp;
           Tags: 
-          $:', '.join([ '<a href="/tags/%s">%s</a>' % (tag, tag) for tag.strip() in meta.tags.split(',') ])
+          $:', '.join([ '<a href="/tags/%s">%s</a>' % (tag.strip(), tag.strip()) for tag in meta.tags.split(',') ])
       </div>
     </div>
 
