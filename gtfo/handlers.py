@@ -49,9 +49,10 @@ class GTFO(object):
   it will try to render raw .html documents matching the requested slug before
   it tries to render the corrosponding .gtf file. """
   def GET(self, path=None, reply=reply_form()):
+    print 'got request for path:', path
     if not path: 
       path = conf.get('navigation', 'default_slug')
-      return web.redirect('/'+path)
+      return web.seeother('/'+path)
     (slug, ext) = splitext(path)
     ext = ext.lower()
 
@@ -110,6 +111,6 @@ class Comment(object):
     else:
       gtf = GTF(path)
       db.insert('comments', slug=path, **reply.d)
-      return web.redirect('/'+path)
+      return web.seeother('/'+path)
 
 app = web.application(urls, globals())
