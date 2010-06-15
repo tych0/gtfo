@@ -99,13 +99,13 @@ def get_front_page_posts(db):
   return get_posts_as_dicts(gtf_files, db)
 
 def get_tags():
-  s = set()
+  tags = defaultdict(lambda: 0)
   for post in _get_blog_posts():
     if hasattr(post.meta, 'tags'):
       for tag in post.meta.tags.split(','):
-        s.add(tag.strip())
-  return s
-
+        tags[tag.strip()] = tags[tag.strip()] + 1
+  return tags.items()
+    
 def get_posts_by_tag(tag):
   posts = []
   for post in _get_blog_posts():
