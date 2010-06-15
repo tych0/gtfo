@@ -28,8 +28,7 @@
         <li>
           <h2>Tags</h2>
           <p>
-          $for tag in get_tags():
-            <a href="/tags/$tag">$tag</a>,
+          $:', '.join([ '<a href="/tags/%s">%s</a>' % (tag.strip(), tag.strip()) for tag in get_tags() ])
           </p>
         </li>
       </ul>

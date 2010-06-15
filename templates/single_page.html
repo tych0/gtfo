@@ -17,6 +17,7 @@ $:render.header(meta)
       </div>
       <div class="meta">
         <p class="links">$len(comments) comments 
+        $if meta.tags:
           &nbsp;&bull;&nbsp;&nbsp;
           Tags: 
           $:', '.join([ '<a href="/tags/%s">%s</a>' % (tag.strip(), tag.strip()) for tag in meta.tags.split(',') ])
