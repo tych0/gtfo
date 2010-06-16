@@ -64,7 +64,7 @@ def get_gtf_in_dir(slug):
                              e.lower().endswith('.gtf'),
                    entries)
   entries = map(lambda e: GTF(slug+'/'+os.path.splitext(e)[0]), entries)
-  entries = sorted(entries, cmp, lambda g: g.meta.date)
+  entries = sorted(entries, lambda x, y: cmp(y, x), lambda g: g.meta.date)
   return entries
 
 def _get_blog_posts():
