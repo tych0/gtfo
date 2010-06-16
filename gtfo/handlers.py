@@ -9,7 +9,7 @@ from util import *
 from comments import reply_form
 
 # TODO: move this to a config option
-PASSTHROUGH_EXTENSIONS = ['.txt', '.gpx', '.jpg', '.pdf']
+PASSTHROUGH_EXTENSIONS = ['.txt', '.gpx', '.jpg', '.pdf', '.css']
 
 # our URL structure
 urls = (
@@ -49,7 +49,6 @@ class GTFO(object):
   it will try to render raw .html documents matching the requested slug before
   it tries to render the corrosponding .gtf file. """
   def GET(self, path=None, reply=reply_form()):
-    print 'got request for path:', path
     if not path: 
       path = conf.get('navigation', 'default_slug')
       return web.seeother('/'+path)
@@ -83,7 +82,7 @@ class GTFO(object):
                                 reply
                                )
     except IOError, e:
-      return web.webapi.notfound()
+      raise web.notfound()
 
 class Tags(object):
   def GET(self, tag):
