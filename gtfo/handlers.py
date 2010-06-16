@@ -1,5 +1,7 @@
 from os.path import splitext
 
+from sys import stderr
+
 import web
 
 from markdown2 import markdown
@@ -25,7 +27,7 @@ urls = (
 #    id INTEGER PRIMARY KEY, slug TEXT,
 #    name TEXT, url TEXT, email TEXT, payload TEXT,
 #    time DATETIME DEFAULT(DATETIME('NOW')));"
-db = web.database(dbn='sqlite', db='gtfo.db')
+db = web.database(dbn='sqlite', db='/home/tychoa/beta.tycho.ws/gtfo.db')
 
 # set up some 'globals' for use inside of the templates
 render = web.template.render('templates/')
@@ -51,7 +53,7 @@ class GTFO(object):
   def GET(self, path=None, reply=reply_form()):
     if not path: 
       path = conf.get('navigation', 'default_slug')
-      return web.seeother('/'+path)
+      return PrettyRedirect('/'+path)
     (slug, ext) = splitext(path)
     ext = ext.lower()
 
@@ -110,6 +112,6 @@ class Comment(object):
     else:
       gtf = GTF(path)
       db.insert('comments', slug=path, **reply.d)
-      return web.seeother('/'+path)
+      return PrettyRedirect('/'+path)
 
 app = web.application(urls, globals())

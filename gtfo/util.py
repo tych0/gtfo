@@ -1,9 +1,10 @@
 from __future__ import with_statement
 
-import os
+import os, urlparse, web
 from datetime import date
 from itertools import islice
 from collections import defaultdict
+from web import HTTPError, ctx
 
 from markdown2 import markdown
 
@@ -173,3 +174,23 @@ class GTF(object):
   
   def raw_content_html(self):
     return markdown(self.markdown)
+
+class PrettyRedirect(HTTPError):
+  """A `304 See Other` redirect which ignores the ctx.homepath (mod_rewrite
+  mucks with this, which yields ugly (but working) URLS.). GTFO uses this
+  redirect to avoid this problem."""
+  def __init__(self, url, status='303 See Other'):
+        """
+        Returns a `status` redirect to the new URL. 
+        `url` is joined with the base URL so that things like 
+        `redirect("about") will work properly.
+        """
+        newloc = urlparse.urljoin(web.ctx.path, url)
+
+        newloc = ctx.homedomain + newloc
+
+        headers = {
+            'Content-Type': 'text/html',
+            'Location': newloc
+        }
+        HTTPError.__init__(self, status, headers, "")
