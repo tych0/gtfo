@@ -113,7 +113,7 @@ def get_posts_by_tag(tag):
     if hasattr(post.meta, 'tags'):
       if tag in [ t.strip() for t in post.meta.tags.split(',') ]:
         posts.append(post)
-  return sorted(posts, key=lambda p: p.meta.date)
+  return sorted(posts, cmp=lambda x,y: cmp(y,x), key=lambda p: p.meta.date)
 
 def get_sidebar_posts():
   return _last_n_blog_posts(conf.getint('sidebar', 'blog_posts_on_sidebar'))
