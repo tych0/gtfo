@@ -27,7 +27,7 @@ urls = (
 #    id INTEGER PRIMARY KEY, slug TEXT,
 #    name TEXT, url TEXT, email TEXT, payload TEXT,
 #    time DATETIME DEFAULT(DATETIME('NOW')));"
-db = web.database(dbn='sqlite', db='/home/tychoa/beta.tycho.ws/gtfo.db')
+db = web.database(dbn='sqlite', db=conf.get('system', 'db_location'))
 
 # set up some 'globals' for use inside of the templates
 render = web.template.render('templates/')

@@ -73,6 +73,13 @@ def get_config(conf_file):
   if not conf.has_option('sidebar', 'blog_posts_on_sidebar'):
     conf.set('sidebar', 'blog_posts_on_sidebar', 5)
 
+  ## system
+  if not conf.has_section('system'):
+    conf.add_section('system')
+
+  if not conf.has_option('system', 'db_location'):
+    conf.set('system', 'db_location', 'gtfo.db')
+
   with open(conf_file, 'w') as f:
     conf.write(f)
   return conf
