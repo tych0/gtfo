@@ -111,7 +111,12 @@ class Comment(object):
       return GTFO().GET(path, reply)
     else:
       gtf = GTF(path)
-      db.insert('comments', slug=path, **reply.d)
+      comment = reply.d
+
+      # no point in putting the capcha in the db
+      del comment['capcha']
+
+      db.insert('comments', slug=path, **comment)
       return PrettyRedirect('/'+path)
 
 app = web.application(urls, globals())
