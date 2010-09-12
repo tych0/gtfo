@@ -1,4 +1,7 @@
 from __future__ import with_statement
+
+from os.path import exists
+
 from ConfigParser import ConfigParser
 def get_config(conf_file):
   """ Return the user's conf file (or create it if it doesn't exist) and make
@@ -80,6 +83,7 @@ def get_config(conf_file):
   if not conf.has_option('system', 'db_location'):
     conf.set('system', 'db_location', 'gtfo.db')
 
-  with open(conf_file, 'w') as f:
-    conf.write(f)
+  if not exists(conf_file):
+    with open(conf_file, 'w') as f:
+      conf.write(f)
   return conf
