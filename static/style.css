@@ -253,6 +253,11 @@ a img {
 	color: #FFFFFF;
 }
 
+/* make error messages red */
+strong.wrong {
+  color: red;
+}
+
 /* Fancy table */
 
 table.fancy {
