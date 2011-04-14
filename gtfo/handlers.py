@@ -50,12 +50,15 @@ class GTFO(object):
   compatability (and/or users who like to have more control over certain pages)
   it will try to render raw .html documents matching the requested slug before
   it tries to render the corrosponding .gtf file. """
-  def GET(self, path=None, reply=reply_form()):
+  def GET(self, path=None, reply=None):
     if not path: 
       path = conf.get('navigation', 'default_slug')
       return PrettyRedirect('/'+path)
     (slug, ext) = splitext(path)
     ext = ext.lower()
+
+    if not reply:
+      reply = reply_form()
 
     if ext in PASSTHROUGH_EXTENSIONS:
       try:
