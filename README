@@ -1,0 +1,19 @@
+GTFO is a piece of blogging software, much like wordpress. However, GTFO does
+what it says on the tin: it gets out of your way.
+
+In GTFO, there are no web interfaces, no MySQL databases to setup. You write
+your blog posts in a text format based on markdown. The directory structure of
+your website serves as the layout, and links are permanent unless you move the
+files yourself.
+
+GTFO supports:
+  * Blogging
+  * Static pages
+  * Tags
+  * Comments
+  * Posts grouped by date
+  * Recent posts
+  * Recent comments
+
+GTFO makes use of CSS for most layout work, so you can customize the look to
+your tastes.
