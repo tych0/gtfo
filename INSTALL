@@ -1,0 +1,16 @@
+GTFO has the following dependencies:
+  webpy: http://webpy.org (tested with 0.34)
+  markdown2: https://github.com/trentm/python-markdown2
+
+These should be somewhere your python runtime can find them. Additionally, you
+can put the gtfo/ subdirectory there too.
+
+dispatcher.py and the associated .htaccess file are for use with Apache. If you
+don't use (or don't want to use) Apache, you can start the dispatcher script
+directly to run the dispatcher script directly to start the builtin webpy
+webserver.
+
+Web content should be placed in the www/ subdirectory as a sibling to your
+dispatcher script. The file www/gtfo.conf is special; it is your GTFO config
+file. If GTFO can't find one when it starts, it will autogenerate one for you,
+so you can change it to your liking.
