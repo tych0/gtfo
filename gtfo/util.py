@@ -161,9 +161,9 @@ class GTF(object):
     markd = []
     in_meta = True
   
-    with open('www/'+slug+'.gtf') as f:
+    with open(os.path.join('www', slug + '.gtf')) as f:
       for line in f:
-        if conf.get('misc', 'gtf_separator') in line:
+        if conf.siteopts.gtf_separator in line:
           in_meta = False
         elif in_meta:
           meta.append(line)

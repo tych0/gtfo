@@ -11,6 +11,18 @@ def get_config(conf_file):
   sure all the settings are present, or set them to their defaults. """
   ### set default opts 
   defaults = {
+    ## siteopts
+    "siteopts" : {
+      # where is the root of the website on the filesystem?
+      "root" : "www/",
+
+      # what should the separator be when interpreting gtf files?
+      "gtf_separator" : "%%%%",
+
+      # Site's title tag prefix, if any
+      "title_prefix" : 'tycho.ws - ',
+    },
+
     ## navigation (main menu)
     "navigation" : {
       # hide the 'index.{mkd,html}' file from the top menu?
@@ -39,15 +51,6 @@ def get_config(conf_file):
 
       # what are the default tags, if any?
       "tags" : "",
-    },
-
-    ## misc
-    "misc" : {
-      # what should the separator be when interpreting gtf files?
-      "gtf_separator" : "%%%%",
-
-      # Site's title tag prefix, if any
-      "title_prefix" : 'tycho.ws - ',
     },
 
     ## blog
