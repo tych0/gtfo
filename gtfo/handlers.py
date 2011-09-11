@@ -1,4 +1,4 @@
-from os.path import splitext
+from os.path import splitext, join
 
 from sys import stderr
 
@@ -32,7 +32,7 @@ db = web.database(dbn='sqlite', db=conf.get('system', 'db_location'))
 # set up some 'globals' for use inside of the templates
 render = web.template.render('templates/')
 web.template.Template.globals['render'] = render
-web.template.Template.globals['navlist'] = build_root_nav_list('www')
+web.template.Template.globals['navlist'] = build_root_nav_list(conf.siteopts.root)
 web.template.Template.globals['conf'] = conf
 web.template.Template.globals['get_front_page_posts'] = lambda: get_front_page_posts(db)
 web.template.Template.globals['get_sidebar_posts'] = get_sidebar_posts
@@ -62,18 +62,18 @@ class GTFO(object):
 
     if ext in PASSTHROUGH_EXTENSIONS:
       try:
-        return open('www/'+path).read()
+        return open(join(conf.siteopts.root, path)).read()
       except IOError:
         return web.webapi.notfound()
 
-    if os.path.isdir('www/'+slug.replace('-', '/')):
+    if os.path.isdir(join(conf.siteopts.root, slug.replace('-', '/'))):
       meta = Meta(slug)
       meta.title = 'Posts for the month of '+slug
       return render.multiple_pages(meta, get_posts_as_dicts(get_gtf_in_dir(slug.replace('-', '/')), db))
 
-    # TODO: this ({www/, rendering .html first}) should probably be
-    # configurable
     comments = get_comments_for_slug(slug, db)
+    
+    # try to find a .gtf for the slug, then a .html, then 404
     try:
       gtf = GTF(slug)
       return render.single_page(gtf.meta, markdown(gtf.markdown), comments, reply)
@@ -82,11 +82,11 @@ class GTFO(object):
 
     try:
       return render.single_page(Meta(slug), 
-                                open('www/'+slug+'.html').read(), 
+                                open(join(conf.siteopts.root, slug+'.html')).read(), 
                                 comments, 
                                 reply
                                )
-    except IOError, e:
+    except IOError:
       raise web.notfound()
 
 class Tags(object):

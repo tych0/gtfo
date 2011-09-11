@@ -59,7 +59,7 @@ def get_posts_as_dicts(gtf_files, db):
   return posts
 
 def get_gtf_in_dir(slug):
-  entries = os.listdir('www/'+slug)
+  entries = os.listdir(os.path.join(conf.siteopts.root, slug))
   entries = filter(lambda e: not os.path.isdir(e) and
                              not e.startswith('.') and
                              e.lower().endswith('.gtf'),
@@ -161,7 +161,7 @@ class GTF(object):
     markd = []
     in_meta = True
   
-    with open(os.path.join('www', slug + '.gtf')) as f:
+    with open(os.path.join(conf.siteopts.root, slug + '.gtf')) as f:
       for line in f:
         if conf.siteopts.gtf_separator in line:
           in_meta = False
