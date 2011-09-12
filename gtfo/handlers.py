@@ -52,7 +52,7 @@ class GTFO(object):
   it tries to render the corrosponding .gtf file. """
   def GET(self, path=None, reply=None):
     if not path: 
-      path = conf.get('navigation', 'default_slug')
+      path = conf.navigation.default_slug
       return PrettyRedirect('/'+path)
     (slug, ext) = splitext(path)
     ext = ext.lower()

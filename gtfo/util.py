@@ -24,9 +24,9 @@ def build_root_nav_list(path):
   files = os.listdir(path)
   navlist = []
 
-  if conf.getboolean('navigation', 'add_home'):
+  if conf.navigation.add_home:
     navlist.append(('/', 'home'))
-  if conf.getboolean('navigation', 'add_blog'):
+  if conf.navigation.add_blog:
     navlist.append(('/blog', 'blog'))
 
   for f in files:
@@ -36,7 +36,7 @@ def build_root_nav_list(path):
         ext == '.html' or ext == '.gtf'
       ):
       navlist.append( ('/'+slug, slug) )
-  if conf.getboolean('navigation', 'remove_index'):
+  if conf.navigation.remove_index:
     navlist = filter(lambda (x,y): x!='/index', navlist)
   return sorted(navlist, _length_then_lex, lambda (a, b): a)
 
@@ -69,6 +69,8 @@ def get_gtf_in_dir(slug):
   return entries
 
 def _get_blog_posts():
+  # TODO: This is a stupid way to do this. Instead, just look in everything
+  # that's a directory in the blog/ subdirectory.
   year = date.today().year
   posts = []
   while year > 1990: # nobody used the internet for 1990, right? ;-)
@@ -96,7 +98,7 @@ def _last_n_blog_posts(n):
   return islice(_get_blog_posts(), n)
 
 def get_front_page_posts(db):
-  gtf_files = _last_n_blog_posts(conf.getint('blog', 'posts_on_front_page'))
+  gtf_files = _last_n_blog_posts(conf.blog.posts_on_front_page)
   return get_posts_as_dicts(gtf_files, db)
 
 def get_tags():
@@ -116,7 +118,7 @@ def get_posts_by_tag(tag):
   return sorted(posts, cmp=lambda x,y: cmp(y,x), key=lambda p: p.meta.date)
 
 def get_sidebar_posts():
-  return _last_n_blog_posts(conf.getint('sidebar', 'blog_posts_on_sidebar'))
+  return _last_n_blog_posts(conf.sidebar.blog_posts_on_sidebar)
 
 def get_comments_for_slug(slug, db):
   return list(db.select('comments', {'slug' : slug}, where="slug = $slug", order="time DESC"))
@@ -146,11 +148,8 @@ class Meta(object):
       pass
 
   def __getattr__(self, name):
-    # if we couldn't find the attribute, get the default (or fail)
-    if conf.has_option('page_defaults', name):
-      return conf.get('page_defaults', name)
-    else:
-      raise AttributeError(name)
+    # if we couldn't find the attribute, get the default
+    return getattr(conf.page_defaults, name)
 
 class GTF(object):
   """ constructor for automatically parsing a .gtf file """

@@ -1,7 +1,6 @@
 from __future__ import with_statement
 
 from os.path import exists
-
 from ConfigParser import ConfigParser
 
 from tyconfig import TYConfig
