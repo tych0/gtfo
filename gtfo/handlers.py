@@ -65,13 +65,13 @@ class GTFO(object):
       try:
         return open(join(conf.siteopts.root, path)).read()
       except IOError:
-        return web.webapi.notfound()
+        return web.notfound()
 
-    if os.path.isdir(join(conf.siteopts.root, slug.replace('-', '/'))):
+    if os.path.isdir(join(conf.siteopts.root, slug)):
       meta = Meta(slug)
       meta.title = 'Posts for the month of '+slug
       return render.multiple_pages('Posts for the month of '+slug, 
-                                   get_gtf_in_dir(slug.replace('-', '/'))
+                                   get_gtf_in_slug(slug))
 
     comments = get_comments_for_slug(slug, db)
     

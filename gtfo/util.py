@@ -64,8 +64,8 @@ def get_posts_as_dicts(gtf_files, db):
     posts.append(d)
   return posts
 
-def _get_blog_posts():
-  for root, dirs, files in os.walk(join(conf.siteopts.root, 'blog')):
+def get_gtf_in_slug(slug):
+  for root, dirs, files in os.walk(join(conf.siteopts.root, slug)):
 
     # Don't go into . directories
     filter(lambda d: not d.startswith('.'), dirs)
@@ -74,12 +74,15 @@ def _get_blog_posts():
       if f.lower().endswith('.gtf'):
         yield Content(slug_from_path(join(root, f)))
 
+def _get_blog_posts():
+  return get_gtf_in_slug('blog')
+
 def get_sidebar_calendar():
   months = defaultdict(lambda: 0)
   for post in _get_blog_posts():
-    post_month = post.date[:-3] # dates are in YYYY-MM-DD format
+    post_month = post.date[:-3].replace('-', '/') # dates are in YYYY-MM-DD format
     months[post_month] = months[post_month] + 1
-  return sorted(months.items(), key=lambda (k, v): k)
+  return sorted(months.items(), key=lambda (k, v): k, reverse=True)
 
 def _last_n_blog_posts(n):
   return islice(_get_blog_posts(), n)
