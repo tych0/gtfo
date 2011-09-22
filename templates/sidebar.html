@@ -6,7 +6,7 @@
           <h2>Recent Posts</h2>
           <ul>
             $for post in get_sidebar_posts():
-              <li><a href="/$post.meta.slug">$post.meta.title</a> by $post.meta.author</li>
+              <li><a href="/$post.slug">$post.title</a> by $post.author</li>
           </ul>
         </li>
         <li>

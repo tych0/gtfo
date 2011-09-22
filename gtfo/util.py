@@ -1,7 +1,7 @@
 from __future__ import with_statement
 
 import os, urlparse, web
-from os.path import join
+from os.path import join, splitext
 from datetime import date
 from itertools import islice
 from collections import defaultdict
@@ -10,6 +10,11 @@ from web import HTTPError, ctx
 from markdown2 import markdown
 
 from gtfo import conf
+from content import Content
+
+def slug_from_path(path):
+  (name, _) = splitext(path)
+  return name[ len(conf.siteopts.root) :]
 
 def _length_then_lex(f, s):
   """ Sorts strings on length. If two strings are the same length,
@@ -45,14 +50,14 @@ def get_posts_as_dicts(gtf_files, db):
   posts = []
   for post in gtf_files:
     d = {}
-    d['title'] = post.meta.title
-    d['author'] = post.meta.author
-    d['date'] = post.meta.date
-    d['content'] = post.raw_content_html()
-    d['slug'] = post.meta.slug
-    d['tags'] = [ t.strip() for t in post.meta.tags.split(',') ]
+    d['title'] = post.title
+    d['author'] = post.author
+    d['date'] = post.date
+    d['content'] = post.html
+    d['slug'] = post.slug
+    d['tags'] = post.tags
     d['comment_count'] = db.select('comments', 
-                                   vars={'slug':post.meta.slug},
+                                   vars={'slug':post.slug},
                                    what='COUNT(*) as count',
                                    where='slug=$slug',
                                   )[0].count
@@ -67,12 +72,12 @@ def _get_blog_posts():
     
     for f in files:
       if f.lower().endswith('.gtf'):
-        yield GTF(path=join(root, f))
+        yield Content(slug_from_path(join(root, f)))
 
 def get_sidebar_calendar():
   months = defaultdict(lambda: 0)
   for post in _get_blog_posts():
-    post_month = post.meta.date[:-3] # dates are in YYYY-MM-DD format
+    post_month = post.date[:-3] # dates are in YYYY-MM-DD format
     months[post_month] = months[post_month] + 1
   return sorted(months.items(), key=lambda (k, v): k)
 
@@ -86,18 +91,18 @@ def get_front_page_posts(db):
 def get_tags():
   tags = defaultdict(lambda: 0)
   for post in _get_blog_posts():
-    if hasattr(post.meta, 'tags'):
-      for tag in post.meta.tags.split(','):
+    if hasattr(post, 'tags') and post.tags:
+      for tag in post.tags:
         tags[tag.strip()] = tags[tag.strip()] + 1
   return tags.items()
     
 def get_posts_by_tag(tag):
   posts = []
   for post in _get_blog_posts():
-    if hasattr(post.meta, 'tags'):
-      if tag in [ t.strip() for t in post.meta.tags.split(',') ]:
+    if hasattr(post, 'tags') and post.tags:
+      if tag in [ t.strip() for t in post.tags ]:
         posts.append(post)
-  return sorted(posts, cmp=lambda x,y: cmp(y,x), key=lambda p: p.meta.date)
+  return sorted(posts, cmp=lambda x,y: cmp(y,x), key=lambda p: p.date)
 
 def get_sidebar_posts():
   return _last_n_blog_posts(conf.sidebar.blog_posts_on_sidebar)

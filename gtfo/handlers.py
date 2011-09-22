@@ -8,6 +8,7 @@ from markdown2 import markdown
 from gtfo import conf
 from util import *
 from comments import reply_form
+from content import Content
 
 # TODO: move this to a config option
 PASSTHROUGH_EXTENSIONS = ['.txt', '.gpx', '.jpg', '.pdf', '.css']
@@ -73,19 +74,9 @@ class GTFO(object):
 
     comments = get_comments_for_slug(slug, db)
     
-    # try to find a .gtf for the slug, then a .html, then 404
     try:
-      gtf = GTF(slug)
-      return render.single_page(gtf.meta, markdown(gtf.markdown), comments, reply)
-    except IOError:
-      pass
-
-    try:
-      return render.single_page(Meta(slug), 
-                                open(join(conf.siteopts.root, slug+'.html')).read(), 
-                                comments, 
-                                reply
-                               )
+      content = Content(slug)
+      return render.single_page(content, reply)
     except IOError:
       raise web.notfound()
 

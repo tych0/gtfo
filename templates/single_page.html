@@ -1,26 +1,26 @@
-$def with (meta, content, comments, reply_form)
-$:render.header(meta)
+$def with (content, reply_form)
+$:render.header(content.title)
 <div id="page">
   <div id="content">
 
     <div class="post">
-      <h2 class="title">$(meta.title)</h2>
+      <h2 class="title">$(content.title)</h2>
 
       <p class="byline">
-        <small>Posted by $meta.author
-        $if meta.date:
-          on $(meta.date)
+        <small>Posted by $content.author
+        $if content.date:
+          on $(content.date)
         </small>
       </p>
       <div class="entry">
-        $:content
+        $:content.html
       </div>
       <div class="meta">
-        <p class="links">$len(comments) comments 
-        $if meta.tags:
+        <p class="links">$len(content.comments) comments 
+        $if content.tags:
           &nbsp;&bull;&nbsp;&nbsp;
           Tags: 
-          $:', '.join([ '<a href="/tags/%s">%s</a>' % (tag.strip(), tag.strip()) for tag in meta.tags.split(',') ])
+          $:', '.join([ '<a href="/tags/%s">%s</a>' % (tag.strip(), tag.strip()) for tag in content.tags ])
         </p>
       </div>
     </div>
@@ -35,7 +35,7 @@ $:render.header(meta)
       </script>
  
     <div class="comments">
-      $for comment in comments:
+      $for comment in content.comments:
         <div class="comment">
           <p>
             $if comment.url:
@@ -48,7 +48,7 @@ $:render.header(meta)
         </div>
     </div>
 		<div id="reply_id" class="reply" style="padding: 10px;">
-			<form id="reply_form" method="post" action="/$(meta.slug)/comment">
+			<form id="reply_form" method="post" action="/$(content.slug)/comment">
         <p>
 			  $:reply_form.render()
 				<input type="submit" value="Post Reply" />
