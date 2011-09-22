@@ -68,9 +68,7 @@ class GTFO(object):
         return web.notfound()
 
     if os.path.isdir(join(conf.siteopts.root, slug)):
-      meta = Meta(slug)
-      meta.title = 'Posts for the month of '+slug
-      return render.multiple_pages('Posts for the month of '+slug, 
+      return render.multiple_pages('Posts in '+slug, 
                                    get_gtf_in_slug(slug))
 
     comments = get_comments_for_slug(slug, db)
