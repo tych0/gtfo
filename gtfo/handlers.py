@@ -34,8 +34,8 @@ render = web.template.render('templates/')
 web.template.Template.globals['render'] = render
 web.template.Template.globals['navlist'] = build_root_nav_list()
 web.template.Template.globals['conf'] = conf
-web.template.Template.globals['get_front_page_posts'] = lambda: get_front_page_posts(db)
-web.template.Template.globals['get_sidebar_posts'] = get_sidebar_posts
+web.template.Template.globals['get_front_page_posts'] = lambda: last_n_blog_posts(conf.blog.posts_on_front_page)
+web.template.Template.globals['get_sidebar_posts'] = lambda: last_n_blog_posts(conf.sidebar.blog_posts_on_sidebar)
 web.template.Template.globals['get_sidebar_calendar'] = get_sidebar_calendar
 web.template.Template.globals['get_tags'] = get_tags
 web.template.Template.globals['recent_comments'] = lambda: recent_comments(db)
@@ -71,8 +71,6 @@ class GTFO(object):
       return render.multiple_pages('Posts in '+slug, 
                                    get_gtf_in_slug(slug))
 
-    comments = get_comments_for_slug(slug, db)
-    
     try:
       content = Content(slug)
       return render.single_page(content, reply)
@@ -99,7 +97,6 @@ class Comment(object):
     if not reply.validates():
       return GTFO().GET(path, reply)
     else:
-      gtf = GTF(path)
       comment = reply.d
 
       # no point in putting the capcha in the db
