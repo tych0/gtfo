@@ -19,7 +19,7 @@ def _length_then_lex(f, s):
   else:
     return len(f) - len(s)
 
-def build_root_nav_list(path):
+def build_root_nav_list():
   """ Build the root nav list. This includes all files ending in .html or .gtf
   which are in the root web directory."""
   files = os.listdir(conf.siteopts.root)
@@ -106,7 +106,7 @@ def get_comments_for_slug(slug, db):
   return list(db.select('comments', {'slug' : slug}, where="slug = $slug", order="time DESC"))
   
 def recent_comments(db):
-  comments = list(db.select('comments', limit=10, order="time DESC"))
+  comments = list(db.select('comments', limit=conf.sidebar.recent_comments, order="time DESC"))
   meta = []
   for comment in comments:
     try:
@@ -168,17 +168,17 @@ class PrettyRedirect(HTTPError):
   mucks with this, which yields ugly (but working) URLS.). GTFO uses this
   redirect to avoid this problem."""
   def __init__(self, url, status='303 See Other'):
-        """
-        Returns a `status` redirect to the new URL. 
-        `url` is joined with the base URL so that things like 
-        `redirect("about") will work properly.
-        """
-        newloc = urlparse.urljoin(web.ctx.path, url)
+    """
+    Returns a `status` redirect to the new URL. 
+    `url` is joined with the base URL so that things like 
+    `redirect("about") will work properly.
+    """
+    newloc = urlparse.urljoin(web.ctx.path, url)
 
-        newloc = ctx.homedomain + newloc
+    newloc = ctx.homedomain + newloc
 
-        headers = {
-            'Content-Type': 'text/html',
-            'Location': newloc
-        }
-        HTTPError.__init__(self, status, headers, "")
+    headers = {
+      'Content-Type': 'text/html',
+      'Location': newloc
+    }
+    HTTPError.__init__(self, status, headers, "")

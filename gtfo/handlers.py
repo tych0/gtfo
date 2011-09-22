@@ -31,7 +31,7 @@ db = web.database(dbn='sqlite', db=conf.system.db_location)
 # set up some 'globals' for use inside of the templates
 render = web.template.render('templates/')
 web.template.Template.globals['render'] = render
-web.template.Template.globals['navlist'] = build_root_nav_list(conf.siteopts.root)
+web.template.Template.globals['navlist'] = build_root_nav_list()
 web.template.Template.globals['conf'] = conf
 web.template.Template.globals['get_front_page_posts'] = lambda: get_front_page_posts(db)
 web.template.Template.globals['get_sidebar_posts'] = get_sidebar_posts

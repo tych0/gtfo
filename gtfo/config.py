@@ -60,6 +60,7 @@ def get_config(conf_file):
     ## sidebar
     "sidebar" : {
       "blog_posts_on_sidebar" : 5,
+      "recent_comments" : 10,
     },
 
     ## system
