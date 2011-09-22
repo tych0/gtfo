@@ -1,6 +1,6 @@
 from __future__ import with_statement
 
-from os.path import exists
+from os.path import exists, expanduser
 from ConfigParser import ConfigParser
 
 from tyconfig import TYConfig
@@ -13,7 +13,7 @@ def get_config(conf_file):
     ## siteopts
     "siteopts" : {
       # where is the root of the website on the filesystem?
-      "root" : "www/",
+      "root" : expanduser("~/www/"),
 
       # what should the separator be when interpreting gtf files?
       "gtf_separator" : "%%%%",

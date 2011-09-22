@@ -1,6 +1,7 @@
 from __future__ import with_statement
 
 import os, urlparse, web
+from os.path import join
 from datetime import date
 from itertools import islice
 from collections import defaultdict
@@ -19,9 +20,9 @@ def _length_then_lex(f, s):
     return len(f) - len(s)
 
 def build_root_nav_list(path):
-  """ Build the root nav list. This includes all files ending in .html or .mkd
+  """ Build the root nav list. This includes all files ending in .html or .gtf
   which are in the root web directory."""
-  files = os.listdir(path)
+  files = os.listdir(conf.siteopts.root)
   navlist = []
 
   if conf.navigation.add_home:
@@ -58,34 +59,15 @@ def get_posts_as_dicts(gtf_files, db):
     posts.append(d)
   return posts
 
-def get_gtf_in_dir(slug):
-  entries = os.listdir(os.path.join(conf.siteopts.root, slug))
-  entries = filter(lambda e: not os.path.isdir(e) and
-                             not e.startswith('.') and
-                             e.lower().endswith('.gtf'),
-                   entries)
-  entries = map(lambda e: GTF(slug+'/'+os.path.splitext(e)[0]), entries)
-  entries = sorted(entries, lambda x, y: cmp(y, x), lambda g: g.meta.date)
-  return entries
-
 def _get_blog_posts():
-  # TODO: This is a stupid way to do this. Instead, just look in everything
-  # that's a directory in the blog/ subdirectory.
-  year = date.today().year
-  posts = []
-  while year > 1990: # nobody used the internet for 1990, right? ;-)
-    month = 12
-    months = []
-    while month > 0:
-      try:
-        month_str = '%02d' % month
-        slug = 'blog/'+str(year)+'/'+month_str
-        for entry in get_gtf_in_dir(slug):
-          yield entry
-      except (IOError, OSError):
-        pass
-      month = month - 1
-    year = year - 1
+  for root, dirs, files in os.walk(join(conf.siteopts.root, 'blog')):
+
+    # Don't go into . directories
+    filter(lambda d: not d.startswith('.'), dirs)
+    
+    for f in files:
+      if f.lower().endswith('.gtf'):
+        yield GTF(path=join(root, f))
 
 def get_sidebar_calendar():
   months = defaultdict(lambda: 0)
@@ -153,14 +135,21 @@ class Meta(object):
 
 class GTF(object):
   """ constructor for automatically parsing a .gtf file """
-  def __init__(self, slug):
+  def __init__(self, slug=None, path=None):
     """ This splits a .gtf file into it's metadata and markdown pieces,
     for use in their respective parsers. """
     meta = []
     markd = []
     in_meta = True
+
+    if slug:
+      assert not path, "Exactly one of slug or path should be true"
+      localpath = join(conf.siteopts.root, slug + '.gtf')
+    else:
+      assert path, "Exactly one of slug or path should be true"
+      localpath = path
   
-    with open(os.path.join(conf.siteopts.root, slug + '.gtf')) as f:
+    with open(localpath) as f:
       for line in f:
         if conf.siteopts.gtf_separator in line:
           in_meta = False

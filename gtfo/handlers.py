@@ -1,5 +1,4 @@
 from os.path import splitext, join
-
 from sys import stderr
 
 import web
@@ -22,12 +21,12 @@ urls = (
   "/(.*)", "GTFO",
 )
 
-# set up the DB
+# set up the DB; you can use the following command to do it:
 # sqlite3 gtfo.db "create table comments (
 #    id INTEGER PRIMARY KEY, slug TEXT,
 #    name TEXT, url TEXT, email TEXT, payload TEXT,
 #    time DATETIME DEFAULT(DATETIME('NOW')));"
-db = web.database(dbn='sqlite', db=conf.get('system', 'db_location'))
+db = web.database(dbn='sqlite', db=conf.system.db_location)
 
 # set up some 'globals' for use inside of the templates
 render = web.template.render('templates/')
@@ -40,7 +39,8 @@ web.template.Template.globals['get_sidebar_calendar'] = get_sidebar_calendar
 web.template.Template.globals['get_tags'] = get_tags
 web.template.Template.globals['recent_comments'] = lambda: recent_comments(db)
 
-# TODO: implement
+# TODO: implement support for changing certain configuration options via an
+# admin interface (maybe)
 class config:
   def GET(self):
     return "no info yet"
