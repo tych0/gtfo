@@ -70,7 +70,8 @@ class GTFO(object):
     if os.path.isdir(join(conf.siteopts.root, slug.replace('-', '/'))):
       meta = Meta(slug)
       meta.title = 'Posts for the month of '+slug
-      return render.multiple_pages(meta, get_posts_as_dicts(get_gtf_in_dir(slug.replace('-', '/')), db))
+      return render.multiple_pages('Posts for the month of '+slug, 
+                                   get_gtf_in_dir(slug.replace('-', '/'))
 
     comments = get_comments_for_slug(slug, db)
     
@@ -82,15 +83,11 @@ class GTFO(object):
 
 class Tags(object):
   def GET(self, tag):
-    meta = Meta(tag)
-    meta.title = 'Tag: '+tag
-    return render.multiple_pages(meta, get_posts_as_dicts(get_posts_by_tag(tag), db))
+    return render.multiple_pages('Tag: '+tag, get_posts_by_tag(tag))
 
 class Blog(object):
   def GET(self):
-    meta = Meta('blog')
-    meta.title = 'Blog'
-    return render.multiple_pages(meta, get_front_page_posts(db))
+    return render.multiple_pages('Blog', get_front_page_posts(db))
 
 class Comment(object):
   def GET(self, path):

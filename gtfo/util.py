@@ -86,7 +86,7 @@ def _last_n_blog_posts(n):
 
 def get_front_page_posts(db):
   gtf_files = _last_n_blog_posts(conf.blog.posts_on_front_page)
-  return get_posts_as_dicts(gtf_files, db)
+  return gtf_files
 
 def get_tags():
   tags = defaultdict(lambda: 0)

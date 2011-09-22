@@ -1,29 +1,29 @@
-$def with (meta, posts)
-$:render.header(meta)
+$def with (title, contents)
+$:render.header(title)
 <div id="page">
   <div id="content">
 
-  $for post in posts:
+  $for content in contents:
     <div class="post">
-      <h2 class="title">$post['title']</h2>
+      <h2 class="title">$content.title</h2>
       <p class="byline">
-        <small>Posted by $post['author']
-        $if post['date']:
-          on $post['date']
+        <small>Posted by $content.author
+        $if content.date:
+          on $content.date
         </small>
       </p>
       <div class="entry">
-        $:post['content']
+        $:content.html
       </div>
       <div class="meta">
         <p class="links">
-          <a href="/$post['slug']" class="comments">Comments
-          ($post['comment_count'])</a> 
-          $if post['tags']:
+          <a href="/$content.slug" class="comments">Comments
+          ($len(content.comments))</a> 
+          $if content.tags:
             &nbsp;&bull;&nbsp;&nbsp; Tags: 
-            $:', '.join([ '<a href="/tags/%s">%s</a>' % (tag, tag) for tag in post['tags'] ])
+            $:', '.join([ '<a href="/tags/%s">%s</a>' % (tag, tag) for tag in content.tags ])
           &nbsp;&bull;&nbsp;&nbsp;
-          <a href="/$post['slug']" class="more">Read full post &raquo;</a>
+          <a href="/$content.slug" class="more">Read full post &raquo;</a>
         </p>
       </div>
     </div>
