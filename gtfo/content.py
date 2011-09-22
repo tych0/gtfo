@@ -41,7 +41,6 @@ class Content(object):
           # someone screwed up their metadata... oh well,
           # do the best we can
           pass
-      print metadata, markd
       self.html = markdown(''.join(markd))
       # TODO: Do we really need to do this for everything? We could get the
       # comments on demand if this turns out to slow things down.
