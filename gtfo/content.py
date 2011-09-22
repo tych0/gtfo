@@ -43,6 +43,8 @@ class Content(object):
           pass
       print metadata, markd
       self.html = markdown(''.join(markd))
+      # TODO: Do we really need to do this for everything? We could get the
+      # comments on demand if this turns out to slow things down.
       self.comments = list(db.select('comments', 
                                      {'slug' : slug}, 
                                      where="slug = $slug", 
