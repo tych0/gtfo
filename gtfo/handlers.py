@@ -83,7 +83,7 @@ class Tags(object):
 
 class Blog(object):
   def GET(self):
-    return render.multiple_pages('Blog', get_front_page_posts(db))
+    return render.multiple_pages('Blog', last_n_blog_posts(conf.blog.posts_on_front_page))
 
 class Comment(object):
   def GET(self, path):
