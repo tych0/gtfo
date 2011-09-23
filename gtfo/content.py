@@ -12,7 +12,6 @@ class Content(object):
   comments and other things associated with it. """
   def __init__(self, slug):
 
-    db = web.database(dbn='sqlite', db=conf.system.db_location)
     metadata = []
     markd = []
 
@@ -42,12 +41,6 @@ class Content(object):
           # do the best we can
           pass
       self.html = markdown(''.join(markd))
-      # TODO: Do we really need to do this for everything? We could get the
-      # comments on demand if this turns out to slow things down.
-      self.comments = list(db.select('comments', 
-                                     {'slug' : slug}, 
-                                     where="slug = $slug", 
-                                     order="time DESC"))
     except IOError:
 
       try: # if not .gtf, try .html
@@ -64,10 +57,23 @@ class Content(object):
       self.title = conf.page_defaults.title
     if not hasattr(self, "date"):
       self.date = None
-    if not hasattr(self, "comments"):
-      kelf.comments = None
+    if not hasattr(self, "_comments"):
+      self._comments = None
     if not hasattr(self, "tags"):
       self.tags = conf.page_defaults.tags.split(',')
     else:
       self.tags = self.tags.split(',')
     
+  def get_comments(self):
+    """ Lazy fetcher for the comments: only query the database if someone
+    actually wants the comments. """
+    if not self._comments:
+      db = web.database(dbn='sqlite', db=conf.system.db_location)
+      self._comments = list(db.select('comments', 
+                                      {'slug' : self.slug}, 
+                                      where="slug = $slug", 
+                                      order="time DESC"))
+    return self._comments
+
+  comments = property(get_comments)
+
